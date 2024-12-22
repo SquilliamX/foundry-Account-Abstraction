@@ -62,6 +62,7 @@ contract MinimalAccount is IAccount, Ownable {
                            EXTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
+    // the execute function allows this account to send transactions
     // Execute arbitrary transactions from this account - can only be called by EntryPoint or owner
     function execute(address dest, uint256 value, bytes calldata functionData) external requireFromEntryPointOrOwner {
         // Make the call to the target contract with specified value and data
@@ -72,6 +73,7 @@ contract MinimalAccount is IAccount, Ownable {
         }
     }
 
+    // this is the function that would contain all the logic for what parameters are needed to happen in order for a transaction to be signed, i.e 7 friends need to sign first, or google needs to sign first.
     // A signature is valid, if it's the MinimalAccount owner
     function validateUserOp(
         PackedUserOperation calldata userOp,
@@ -118,7 +120,6 @@ contract MinimalAccount is IAccount, Ownable {
         if (missingAccountFunds != 0) {
             // Transfer the required funds to the EntryPoint with maximum gas
             (bool success,) = payable(msg.sender).call{ value: missingAccountFunds, gas: type(uint256).max }("");
-            // Ignore the success status as per ERC-4337 spec
             (success);
         }
     }
