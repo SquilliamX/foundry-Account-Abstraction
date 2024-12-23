@@ -64,6 +64,8 @@ Smart Contract Tests Notes
         - `fail_on_revert` Notes
         - How to read fuzz test outputs
     - CHEATCODES FOR TESTS Notes
+    - Foundry Assertion Functions Notes
+    - Debugging Tests Notes
 
 Chisel Notes
 
@@ -137,7 +139,10 @@ DeFi Notes
     - Why We Care About Stablecoins Notes
     - Different Categories/Properties of StableCoins
 
-Account Abstraction
+Account Abstraction Notes (EIP-4337)
+    - How Account Abstraction Works
+    - Account Abstraction in Ethereum Mainnet
+    - Account Abstraction in Zk-Sync
 
 ## Upgradeable Smart Contracts Notes
     - Not Really Upgrading / Parameterize Upgrade Method
@@ -3226,6 +3231,31 @@ assertEq (from foundry-defi-stablecoin-f23):
 
 
 
+### Debugging Tests Notes
+
+You will come across many errors when testing. To debug them you have a few different choices:
+
+1. You can `console.log` values in the test to try and debug. Remember to run `-vv`/`-vvv`/`-vvvv` to see the logs
+
+2. You can run `-vv`/`-vvv`/`-vvvv` at the end of your `forge test --mt <functionName> -vvvv` to see the detailed output of the test output.
+
+
+3. You can run `--debug` to enter into a low level debugger in your terminal.
+    Example:
+    `forge test --debug <functionName> -vvv`, then press q to quit.
+
+    This is a low-level debugger and will have all the opCodes.
+
+    If you press `shift` + `g` this will bring you to the end where it actually reverted. It will show you in blue the line of the test that revert/has an issue.
+
+    At the bottom it shows you what keys to press and their functions.
+
+    If you start pressing `k`, it will walk us back through the codebase and eventually we will land on a line of code, this will be the line that is causing issues.
+
+
+
+
+
 
  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  ## Chisel Notes
@@ -6311,10 +6341,13 @@ So normally, with a private key(wallet) you can make transactions, but with acco
 
 Even parents can give their kids their first wallet, and code in some parental controls where the kids can create all the transactions and the parents approve them.
 
+Account Abstraction allows us to define anything can validate a transaction, not just a private key. All we have to do is code a smart contract that says "Here is what can sign my transactions". You can code literally any rules that you want into your account.
+
 
 ### How Account Abstraction Works
 
-There are two places where account abstraction exist.
+Here are two places where account abstraction exist, Ethereum, and zkSync, (but really most evm-compataible chain supports this, but not really L2s, which is why we use zkSync):
+
 
 #### Account Abstraction in Ethereum Mainnet
 https://eips.ethereum.org/EIPS/eip-4337
@@ -6342,6 +6375,7 @@ Signature Aggregator: Optional add-on to account abstraction where EntryPoint.so
 PayMaster: This is where you setup your codebase to have somebody else pay for the transactions. You need to have a paymaster, because if you do not, the alt-mempool nodes will pay for your gas in transactions but they will only pay for the transaction if one of the account on chain is going to pay for it. So if you do not have a paymaster setup, it will pull funds out of your account.
 
 First run `forge install eth-infinitism/account-abstraction --no-commit`
+
 
 #### Account Abstraction in Zk-Sync
 Other chains like ZkSync have account abstraction natively baked in.

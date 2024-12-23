@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import { Script } from "forge-std/Script.sol";
-import { MinimalAccount } from "src/ethereum/MinimalAccount.sol";
+import { MinimalAccount } from "src/MinimalAccount.sol";
 import { HelperConfig } from "./HelperConfig.s.sol";
 
 /**
@@ -57,7 +57,7 @@ contract DeployMinimal is Script {
         // 1. Initially, the contract is owned by the deployment account
         // 2. We want the deployer (msg.sender) to control the account
         // 3. The owner can perform direct transactions (bypassing EntryPoint)
-        minimalAccount.transferOwnership(msg.sender);
+        minimalAccount.transferOwnership(config.account);
 
         // Stop recording transactions
         vm.stopBroadcast();

@@ -12,7 +12,7 @@ pragma solidity 0.8.24;
  * Each network needs different contract addresses and configurations.
  */
 import { Script, console2 } from "forge-std/Script.sol";
-import { MinimalAccount } from "src/ethereum/MinimalAccount.sol";
+import { MinimalAccount } from "src/MinimalAccount.sol";
 import { EntryPoint } from "lib/account-abstraction/contracts/core/EntryPoint.sol";
 import { ERC20Mock } from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 
@@ -43,7 +43,7 @@ contract HelperConfig is Script {
     // A burner wallet is a temporary wallet used for testing
     address constant BURNER_WALLET = 0x3140fCE59242838A59149FfE25076703CcaaA528;
     // Default wallet address used by Foundry for testing
-    address constant FOUNDRY_DEFAULT_WALLET = 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38;
+    // address constant FOUNDRY_DEFAULT_WALLET = 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38;
     // Default account that comes with Anvil when started
     // This account has test ETH and is used as the deployer
     address constant ANVIL_DEFAULT_ACCOUNT = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
