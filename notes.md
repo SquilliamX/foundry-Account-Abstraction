@@ -144,13 +144,23 @@ Account Abstraction Notes (EIP-4337)
     - Account Abstraction in Ethereum Mainnet
     - Account Abstraction in Zk-Sync
 
-## Upgradeable Smart Contracts Notes
+Upgradeable Smart Contracts Notes
     - Not Really Upgrading / Parameterize Upgrade Method
     - Social Migration Method
     - Proxies Upgrade Method
     - Transparent Proxy Pattern
     - Universal Upgradeable Proxies (UUPS)
     - Diamond Pattern
+
+DAO Notes
+    - DAO Example: Compound Protocol
+    - Discussion Forum in DAOs
+    - Voting Mechanisms
+        - Implementation of Voting
+    - Tools
+        - No Code Solutions to build DAOs
+        - Dev Tools to build DAOs
+    - Legality
 
 
 Keyboard Shortcuts
@@ -6817,6 +6827,142 @@ If you're contract is so big and it doesn't fit into the one contract maximum si
 It also alows you to make more granular upgrades, like you don't have to always deploy and upgrade your entire smart contract, you can just upgrade little pieces of it if you've chunked them out.
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## DAO Notes
+
+https://updraft.cyfrin.io/courses/advanced-foundry/daos/introduction-to-dao
+
+Decentralized Autonomous Organizations (DAOs): any group that is governed by a transparent set of rules found on a blockchain or smart contract
+
+Users are given voting power into what the DAO should do next and the rules of the voting is immutable, transparaent and decentralized.
+
+This solves an age old problem of trust, centrality and transparency in giving the power to the users of the protocol/application instead of everything happening behind closed doors. And this voting piece is a cornerstone of how these operate, this "decentralized governance".
+
+Technically, in a way, a DAO can be summarized by "Company/Organization operated exclusively through code".
+
+
+### DAO Example: Compound Protocol
+
+Compound is a borrowing and lending application/protocol that allows users to borrow and lend their assets. Everything is built in smart contracts.
+
+In compound, we can go to the governance tab, and click on any proposal and actually see everything about the proposal; who voted for, who voted against, and the proposal history. Somebody has to create the proposal in a proposed transaction, and we can actually see the proposed transaction in the proposal history; if we click on the proposal creation, we can actually see the exact parameters they used to make this proposal, just click "decode the input data" in etherscan. The way they are typically divided is they have list of addresses and a list of functions to call on those addresses, and the parameters to pass those addresses.
+
+So for example: A proposal can say "I would like to call `supportMarket(address)` on address <this-address>, and set reserve factor on <this-other-address>, <here> are the parameters & values we are going to pass" (parameters are encoded in bytes). Then also, there should be a description string of what this proposal is actually doing and why we are actually doing this.
+
+The reason we have to do this proposal governance process is that the contracts have access controls where the owner of the contracts is the one to call the two functions and the owner is the governance DAO.
+
+Once a proposal has been created, after a short delay, it becomes active, and this is when people can start voting on them. The delay between a proposal and an active vote can be changed or modified depending on your DAO. Then people have a set amount of time to vote on the proposal. If the proposal passes, it reaches succeeded status.
+
+If we go to the governance contract of the DAO, scroll down and click on "contract" and then "write as proxy", we can actually see the exact functions that people call to vote:
+    castVote:
+
+    castVoteBySignature:
+
+    castVoteWithReason:
+
+If we go to the compound app, click on vote, this is a user interface we can actually vote through to make it easier for non-tech-savvy users, so users can vote directly on the app.
+
+After a proposal passes, it goes into "queued" status, and there is a minimum delay between a proposal passing and a proposal being executed. Somebody has to call the "queued" function and it can only be called if the vote passes. The "queued" function/status says "the proposal has passed, it is now queued, and will be executed soon".
+
+Then after the proposal is queued after a certain amount of time, people can call the "executed" function to execute the passed proposal.
+
+This is a full example of the life cycle of a proposal going through this process.
+
+If a proposal vote fails, it stops right after it fails the vote.
+
+
+### Discussion Forum in DAOs
+
+Usually, just starting a proposal is not enough to garner votes for it. DAOs usually want a forum or sometype of discussion place to talk about these proposal and why you like them or don't like them. Oftentimes, a discourse is one of the main places that people are going to argue for why something is good or bad, so people can vote on the changes.
+
+`Snapshot.org` is a good tool DAOs use to figure out if the DAO community even wants something before it goes to vote. You can join snapshot group, and with the DAO tokens actually vote on things without them being executed just to get the sentiment. Some DAOs use this or even build their DAO in a way that helps the DAO with the voting process
+
+
+### Voting Mechanisms
+
+Voting in decentralized governance is critical to DAOs because sometimes they need to update and change to keep with the times.
+
+Not all protocols need to have a DAO, but those that do need a DAO need a way for the particapants to engage. DAO Users need to know how to particapte and engage in the DAO to help make decisions. - This is a tricky problem to solve:
+
+    Methods: 
+
+        Use an ERC20/NFT as voting power: 
+            In compound, users use the  Comp token to vote for different proposals. This runs the risk of being less fair, because when you tokenize the voting power, you're essentially auctioning off the voting power to the richest person/people; whoever has the most money gets to pick the changes. So if its only the rich people that get to vote, then its highly likely that all the changes in the protocol are going to benefit the rich - which is not an improvement over our current web2 world.
+
+            If a user buys a bunch of votes, make bad/malicious decisions, and then sells all his votes, the user as an individual does not get punished, he just punishes the group as a whole. 
+
+        Skin in the Game:
+            Whenever a user makes a decision, the vote is recorded. And if the decision leads to a bad outcome, you get punished for making evil or bad decisions for your DAO/protocol. This stops malicious evil users as they are held accountable for their decisions.
+
+            The hardest part about this is how a community decides what is a bad outcome and how do we punish malicious users?
+
+        Proof of Personhood or Participation:
+            Image that all users of the compound protocol were given a single vote simply because they used the protocol. Even if they had a thousand wallets, one human being = 1 vote. This would be a fair implementation where votes couldn't actually just be bought. 
+            
+            The issue is "Sybil resistance", how can we be sure that it's one vote equal one participant and not one participant pretending to be thousands of different people so they get more votes? This method has not been solved yet. This most likely will be solved soon with some type of chainlink integration because proof of personhood is basically just off-chain data that can be delievered on-chain, and that's exactly where chainlink shines.
+
+        And more! Can you think of more Voting methods?!
+
+#### Implementation of Voting
+
+On-chain Voting:
+    Example: Compound Finance
+    On-Chain smart contracts, voters call some type of vote functions with their wallet, send the transaction, and done! 
+
+    The problem with this is that if gas is expensive. If you have 10,000 people, and it is $100 per vote, you are costing your community $1,000,000 everytime you want to change anything, This is not sustainable.
+
+    Pro: the architecture is easy and everything is transparent and everything is on-chain
+
+    Con: Very expensive for users/voters.
+
+    Could `Governer C` be the a fix or the beginning of the fix? Governer C uses random samping to do some quadratic voting to help reduce costs while increasing civil resistance.
+
+Off-Chain Voting:
+    You can vote off-chain and still have it be 100% decentralized. You can sign a transaction and sign a vote without actually sending to a blockchain, thereforespending NO gas. Users can send the signed transaction to a decentralized database like IPFS, count all the votes in IPFS, and when the time comes, deliver the result of that data through something like an Oracle, like chainlink, to the blockchain, all in a single transaction!
+
+    Then if you wanted, you can replay all these side transactions in a single transaction to save gas. This can reduce the voting costs by up to 99%. Right now, this is an implementation, and one of the most popular ways to do this is through `SnapShot.org`.
+
+    This off-chain voting mechanism sames a ton of gas to the community and can be a more efficient way to store these transactions anyways, however it needs to be implemented very carefully. If you run youre entire DAO through a centralized oracle, you are introducing a centralized intermediary and ruining the decentralization aspect of your application, so do not use a centralized oracle.
+
+
+### Tools
+
+#### No Code Solutions to build DAOs
+
+- DAO stack
+- Eragon
+- Colony
+- DAO House
+
+are all alternatives that can actually help you with the dev side of running a DAO and building a DAO.
+
+However, if you want more granular control and you do not want to have to pay any of the fees associated with these protocols, you might want to do it from scratch:
+
+#### Dev Tools to build DAOs
+
+- `snapshot.org` is one of the most popular tools out there for both getting the sentiment of the DAO and actually performing that execution. Users can vote through this protocol with their actual tokens, the transactions get stored in IPFS, but none of it actually gets executed unless the DAO chooses to. This is a great way to get a feel of what your DAO wants to do, and you can send transactions and execute votes as well.
+
+- zodiac: Suite of DAO-based tools for you to implement into your DAOs as well.
+
+- Tally: another UI that allows people to see, vote, and interact with smart contracts through user interface.
+
+- Gnosis Safe: Multi-sig wallet, kind of a centrality component, but is on this list because most DAOs in the beginning are probably going to start with some type of centrality. It is must easier to be fast when you don't have thousands of people to wait for a vote. And in the beginning, any protocol is going to be centralized to some degree anyways. Using a multi-sig where voting happens through only a few key members can be "good" in the beginning for your DAO to build faster and often emergencies as well.
+
+Keep in mind that when adding any of these above, you are adding a level of of centrality.
+
+- Openzeppelin contracts: These are the contracts that we're going to be basing our DAO code along on.
+
+### Legality
+
+The future of DAOs is interesting for all these reasons we just above, but especially on a legal front. 
+
+Does it make sense for a DAO to live by the same regulation as another company?
+
+How would you even force a DAO to do something? You'd have to force all users to vote a certain way if the government tells you something... it's not clear on the future of DAOs in the regulation aspect.
+
+it's hard to tell who is even accountable for DAOs.
+
+In the United States, you can actually form a DAO and have it legally recognized in the state of Wyoming.
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
